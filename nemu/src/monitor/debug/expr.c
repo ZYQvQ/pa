@@ -7,9 +7,18 @@
 #include <regex.h>
 
 enum {
-  TK_NOTYPE = 256, TK_EQ
-
-  /* TODO: Add more token types */
+  TK_NOTYPE = 256,
+  TK_DEC,
+  TK_HEX,
+  TK_REG_32,
+    TK_REG_16,
+    TK_REG_8,
+    TK_EQ,
+    TK_NE,
+    TK_NEG,
+    TK_AND,
+    TK_OR,
+    TK_DEREF
 
 };
 
@@ -21,10 +30,25 @@ static struct rule {
   /* TODO: Add more rules.
    * Pay attention to the precedence level of different rules.
    */
-
+  //正则表达式
+  {"0x[1-9a-fA-F][0-9a-fA-F]*", TK_HEX},
+  {"[1-9][0-9]*|0",TK_DEC},
+  {"\\$(eax|ecx|edx|ebx|esp|ebp|esi|edi|eip)",TK_REG_32},   // $也需要转义
+  {"\\$(ax|cx|dx|bx|sp|bp|si|di)",TK_REG_16},
+  {"\\$(al|cl|dl|bl|ah|ch|dh|bh)",TK_REG_8},
   {" +", TK_NOTYPE},    // spaces
-  {"\\+", '+'},         // plus
-  {"==", TK_EQ}         // equal
+  {"\\+", '+'},         // plus转义
+  {"==", TK_EQ},         // equal
+  {"!=", TK_NE},
+  {"&&",TK_AND},
+  {"\\|\\|",TK_OR},
+
+  {"\\+", '+'},
+  {"-", '-'},
+  {"\\*", '*'},
+  {"/", '/'},
+  {"\\(", '('},
+  {"\\)", ')'},
 };
 
 #define NR_REGEX (sizeof(rules) / sizeof(rules[0]) )

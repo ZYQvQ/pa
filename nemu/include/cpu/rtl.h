@@ -1,3 +1,4 @@
+//register-transfer level
 #ifndef __RTL_H__
 #define __RTL_H__
 
