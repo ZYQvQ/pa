@@ -229,7 +229,7 @@ int getDominantOp(int begin, int end) {
 }
 
 //uint32_t -> int 负数
-int eval(int begin int end) {
+int eval(int begin, int end) {
     if(begin > end) {
         printf(" [begin = %d, end = %d] in eval,\n", begin, end);
         assert(0);
@@ -245,7 +245,7 @@ int eval(int begin int end) {
                 break;
             case TK_REG_32:
                 for(int i = 0; i < 8; i++) {
-                    if(!strcmp(tokens[begin].str, regsl[i]) {
+                    if(!strcmp(tokens[begin].str, regsl[i])) {
                         num = reg_l(i);
                         break;
                     }

@@ -176,40 +176,38 @@ static int cmd_x(char* args){
     return 0;
 }
 
-static int cmd_info(char* args){
-    if(args == NULL){
+static int cmd_info(char* args) {
+    if (args == NULL) {
         printf("info_arg can't be empty \n");
         return 0;
     }
-
+    char c;
     int arg_suc = sscanf(args, "%c", &c);
-    if(arg_suc <= 0) {
+    if (arg_suc <= 0) {
         printf("info_arg can't be empty,please input 'r' or 'w'\n");
         return 0;
     }
-        switch (c) {
-            case 'r':
-                printf("eip:  0x%08X\n",cpu.eip);  // 先打印eip的看看 其他的寄存器打印等看看 gdb的效果再写
-                for(int i =0 ;i < 8; i++){
-                    printf("%s:  0x%08X\n",regsl[i],reg_l(i));
-                }
-                for(int i =0 ;i < 8; i++){
-                    printf("%s:  0x%08X\n",regsw[i],reg_w(i));
-                }
-                for(int i =0 ;i < 8; i++){
-                    printf("%s:  0x%08X\n",regsb[i],reg_b(i));
-                }
-                printf("eflags:CF=%d,ZF=%d,SF=%d,IF=%d,OF=%d\n CR0=0x%x, CR3=0x%x\n",
-                       cpu.eflags.CF, cpu.eflags.ZF, cpu.eflags.SF, cpu.eflags.IF, cpu.eflags.OF,
-                       cpu.CR0, cpu.CR3);
+    switch (c) {
+        case 'r':
+            printf("eip:  0x%08X\n", cpu.eip);  // 先打印eip的看看 其他的寄存器打印等看看 gdb的效果再写
+            for (int i = 0; i < 8; i++) {
+                printf("%s:  0x%08X\n", regsl[i], reg_l(i));
+            }
+            for (int i = 0; i < 8; i++) {
+                printf("%s:  0x%08X\n", regsw[i], reg_w(i));
+            }
+            for (int i = 0; i < 8; i++) {
+                printf("%s:  0x%08X\n", regsb[i], reg_b(i));
+            }
 
-                break;
-            case 'w':
-                printAllWp();
-                break;
-            default:
-                assert(0);
-    return 0;
+            break;
+        case 'w':
+            printAllWp();
+            break;
+        default:
+            assert(0);
+            return 0;
+    }
 }
 
 void ui_mainloop(int is_batch_mode) {

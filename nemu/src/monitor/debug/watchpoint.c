@@ -104,13 +104,13 @@ bool free_wp(int num) {
     if(del_wp) {
         del_wp -> next = free_;
         free_ = del_wp;
-        printf("delete wp_%d",num)
+        printf("delete wp_%d",num);
         return true;
     }
     return false;
 }
 
-void printAllWp(){ {
+void printAllWp(){
     if(!head) {
         printf("wp is empty\n");
         return;
