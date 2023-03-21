@@ -6,9 +6,7 @@
 static WP wp_pool[NR_WP];
 static WP *head, *free_;
 
-static int next_wp; //指向下一个wp
-
-static WP *wptemp;
+static int next_wp; //下一个wp.NO
 
 void init_wp_pool() {
     int i;
@@ -22,118 +20,132 @@ void init_wp_pool() {
 
     head = NULL;
     free_ = wp_pool;
+    
     next_wp = 0;
 }
 
-/* done: Implement the functionality of watchpoint */
+/* DONE: Implement the functionality of watchpoint */
 
-bool new_wp(char *args) {
-    //从free链表中返回一个空闲监视点结构
+bool new_wp(char *args) { //分配新的wp
     if(free_ == NULL) {
-        //首先查看free链表是否存在，如果不存在则报错
+        printf("wp is full");
         assert(0);
     }
-    //记录取出的结构并更新链表
-    WP* result = free_;
+    //取出一个free_wp
+    WP* alloc_wp = free_;
     free_ = free_ -> next;
+    alloc_wp -> next = NULL;
+    
+    //alloc_wp初始化
+    alloc_wp -> NO = next_wp; next_wp++; //index后移
+   
+    alloc_wp -> hitNum = 0;
 
-    //设置新的wp相关信息
-    result -> NO = next_wp;
-    next_wp++; //记录索引信息
-    result -> next = NULL; //从链表中取出
-    strcpy(result -> expr, args);
-    result -> hitNum = 0; //初始化触发次数
-    bool is_success;
-    result -> old_val = expr(result -> expr, &is_success); //计算旧的值
-    if(is_success == false) {
-        printf("error in new_wp; expression fault!\n");
+    strcpy(alloc_wp -> expr, args);//监视的表达式
+    bool succ;
+    alloc_wp -> old_val = expr(args, &succ); //表达式求值
+    if(succ == false) {
+        printf("new_wp_expression error\n");
+        free_wp(alloc_wp -> NO);
         return false;
     }
+    
 
-    //对head链表进行更新
-    wptemp = head;
-    if(wptemp == NULL) {
-        head = result;
+    //alloc_wp插入链表
+    WP *wp_t = head;
+    if(wp_t == NULL) { //第一个
+        head = alloc_wp;
     }
-    else {
-        while (wptemp -> next != NULL)
+    else { //链表
+        while (wp_t -> next)
         {
-            wptemp = wptemp -> next;
+            wp_t = wp_t -> next;
         }
-        wptemp -> next = result;
+        wp_t -> next = alloc_wp;
     }
-    printf("Success: set watchpoint %d, old_val = %d\n", result -> NO, result -> old_val);
+    printf("new_wp %d, old_val = %d\n", alloc_wp -> NO, alloc_wp -> old_val);
     return true;
 }
 
-//删除监视点
+//删wp
 bool free_wp(int num) {
-    WP *chosen = NULL; //被选中删除的监视点
+    WP *del_wp = NULL;
     if(head == NULL) {
-        printf("no watch point now\n");
+        printf("wp is empty\n");
         return false;
     }
+    bool succ = false;
+    //只有一个
     if(head -> NO == num) {
-        chosen = head;
+        del_wp = head;
         head = head -> next;
+        succ = true;
     }
     else {
-        wptemp = head;
-        while (wptemp != NULL && wptemp -> next != NULL)
+        WP *wp_t = head;
+        while ( wp_t -> next )
         {
-            /* code */
-            if(wptemp -> next -> NO == num) {
-                chosen = wptemp -> next;
-                wptemp -> next = wptemp -> next -> next;
+            if(wp_t -> next -> NO == num) {
+                del_wp = wp_t -> next;
+                wp_t -> next = wp_t -> next -> next;
+                succ = true;
                 break;
             }
-            wptemp = wptemp -> next;
+            wp_t = wp_t -> next;
         }
     }
-    //删除后在free链表中进行添加
-    if(chosen != NULL) {
-        chosen -> next = free_;
-        free_ = chosen;
+
+    if(!succ){
+        printf("not exists wp_%d \n",num);
+        assert(0);
+    }
+
+    //加回free链表
+    if(del_wp) {
+        del_wp -> next = free_;
+        free_ = del_wp;
+        printf("delete wp_%d",num)
         return true;
     }
     return false;
 }
 
-void void printAllWp(){ {
-    if(head == NULL) {
-        printf("no watchpoint now\n");
+void printAllWp(){ {
+    if(!head) {
+        printf("wp is empty\n");
         return;
     }
     printf("watchpoint:\n");
-    printf("NO.  expr    hitTimes\n");
-    wptemp = head;
-    while (wptemp != NULL)
+
+    WP *wp_t = head;
+    while (wp_t)
     {
-        printf("%d  %s    %d\n", wptemp -> NO, wptemp -> expr, wptemp -> hitNum);
-        wptemp = wptemp ->next;
+        printf("wp_no = %d wp_expr = %s wp_hit = %d\n",
+               wp_t -> NO, wp_t -> expr, wp_t -> hitNum);
+        wp_t = wp_t ->next;
     }
 }
 
+//是否触发wp
 bool check_wp() {
-    bool is_success;
-    int result;
+    bool succ;
+    int val;
     if(head == NULL) {
         return true;
     }
-    wptemp = head;
-    while (wptemp != NULL)
+    WP *wp_t = head;
+    while (wp_t)
     {
-        /* code */
-        result = expr(wptemp -> expr, &is_success);
-        if(result != wptemp -> old_val)
+        val = expr(wp_t -> expr, &succ);
+        if(val != wp_t -> old_val)
         {
-            wptemp -> hitNum += 1;
-            printf("Hardware watchpoint %d:%s\n", wptemp -> NO, wptemp -> expr);
-            printf("Old value:%d\nNew valus:%d\n\n", wptemp -> old_val, result);
-            wptemp -> old_val = result;
+            wp_t -> hitNum += 1;
+            printf("wp_%d:%s changed\n", wp_t -> NO, wp_t -> expr);
+            printf("Old value:%d\nNew new_value:%d\n\n", wp_t -> old_val, val);
+            wp_t -> old_val = val;
             return false;
         }
-        wptemp = wptemp -> next;
+        wp_t = wp_t -> next;
     }
     return true;
 }
