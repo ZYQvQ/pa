@@ -252,10 +252,8 @@ int eval(int begin, int end) {
                 }
                 if(!strcmp(tokens[begin].str, "eip")){
                 num=cpu.eip;
-                } else{
-                    printf("can't match TK_REG_32 in eval()\n");
-                    assert(0);
-                }break;
+                }
+                break;
 
             case TK_REG_16:
                 for(int i = 0; i < 8; i++) {

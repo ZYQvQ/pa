@@ -189,7 +189,7 @@ static int cmd_info(char* args) {
     }
     switch (c) {
         case 'r':
-            printf("eip:  0x%08X\n", cpu.eip);  // 先打印eip的看看 其他的寄存器打印等看看 gdb的效果再写
+            printf("eip:  0x%08X\n", cpu.eip);
             for (int i = 0; i < 8; i++) {
                 printf("%s:  0x%08X\n", regsl[i], reg_l(i));
             }
