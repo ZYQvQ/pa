@@ -245,19 +245,19 @@ int eval(int begin, int end) {
                 break;
             case TK_REG_32:
                 for(int i = 0; i < 8; i++) {
-                    if(!strcmp(tokens[begin].str, regsl[i])) {
+                    if(!(strcmp(tokens[begin].str, regsl[i]))) {
                         num = reg_l(i);
                         break;
                     }
                 }
-                if(!strcmp(tokens[begin].str, "eip")){
+//                if(!(strcmp(tokens[begin].str, "eip"))){
                 num=cpu.eip;
-                }
+//                }
                 break;
 
             case TK_REG_16:
                 for(int i = 0; i < 8; i++) {
-                    if(!strcmp(tokens[begin].str, regsw[i])) {
+                    if(!(strcmp(tokens[begin].str, regsw[i]))) {
                         num = reg_w(i);
                         break;
                     }
@@ -265,7 +265,7 @@ int eval(int begin, int end) {
 
             case TK_REG_8:
                 for(int i = 0; i < 8; i++) {
-                    if(!strcmp(tokens[begin].str, regsb[i])) {
+                    if(!(strcmp(tokens[begin].str, regsb[i]))) {
                         num = reg_b(i);
                         break;
                     }
