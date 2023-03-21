@@ -132,35 +132,38 @@ static int cmd_help(char *args) {
 }
 
 static int cmd_x(char* args){
+    //扫描内存 x N EXPR x 10 $esp
+    //求出表达式 EXPR 的值, 将结果作为起始内存
+    //地址, 以十六进制形式输出连续的 N 个 4 字节
     if(args == NULL){
-        printf("too few parameter! \n");
+        printf("arg can't be empty\n");
         return 0;
     }
 
     char *arg = strtok(args," ");
     if(arg == NULL){
-        printf("too few parameter! \n");
+        printf("x_n can't be empty\n");
         return 0;
     }
     int num ;
     sscanf(arg, "%d", &num);
     char *expr_args = strtok(NULL," ");
-    if(expr_args == NULL){       // 找不到地址参数
-        printf("too few parameter! \n");
+    if(expr_args == NULL){       // expr_lack
+        printf("x_expr can't be empty! \n");
         return 0;
     }
-    if(strtok(NULL," ")!=NULL){  // 还能切出来参数
-        printf("too many parameter! \n");
+    if(strtok(NULL," ")!=NULL){
+        printf("x_args more \n");
         return 0;
     }
 
     bool success = true;
     vaddr_t addr = expr(expr_args , &success);
-    if (success!=true){
-        printf("ERRO!!\n");
+    if (!success){
+        printf("x_unsucc\n");
         return 1;
     }
-
+    //6
     printf("memory:\n");
     for(int i = 0 ; i < num ; i++){
 
@@ -170,6 +173,42 @@ static int cmd_x(char* args){
         }
         printf("\n");
     }
+    return 0;
+}
+
+static int cmd_info(char* args){
+    if(args == NULL){
+        printf("info_arg can't be empty \n");
+        return 0;
+    }
+
+    int arg_suc = sscanf(args, "%c", &c);
+    if(arg_suc <= 0) {
+        printf("info_arg can't be empty,please input 'r' or 'w'\n");
+        return 0;
+    }
+        switch (c) {
+            case 'r':
+                printf("eip:  %08X\n",cpu.eip);  // 先打印eip的看看 其他的寄存器打印等看看 gdb的效果再写
+                for(int i =0 ;i < 8; i++){
+                    printf("%s:  %08X\n",regsl[i],reg_l(i));
+                }
+                for(int i =0 ;i < 8; i++){
+                    printf("%s:  %08X\n",regsw[i],reg_w(i));
+                }
+                for(int i =0 ;i < 8; i++){
+                    printf("%s:  %08X\n",regsb[i],reg_b(i));
+                }
+                printf("eflags:CF=%d,ZF=%d,SF=%d,IF=%d,OF=%d\n CR0=0x%x, CR3=0x%x\n",
+                       cpu.eflags.CF, cpu.eflags.ZF, cpu.eflags.SF, cpu.eflags.IF, cpu.eflags.OF,
+                       cpu.CR0, cpu.CR3);
+
+                break;
+            case 'w':
+                printAllWp();
+                break;
+            default:
+                assert(0);
     return 0;
 }
 
