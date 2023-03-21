@@ -189,15 +189,15 @@ static int cmd_info(char* args){
     }
         switch (c) {
             case 'r':
-                printf("eip:  %08X\n",cpu.eip);  // 先打印eip的看看 其他的寄存器打印等看看 gdb的效果再写
+                printf("eip:  0x%08X\n",cpu.eip);  // 先打印eip的看看 其他的寄存器打印等看看 gdb的效果再写
                 for(int i =0 ;i < 8; i++){
-                    printf("%s:  %08X\n",regsl[i],reg_l(i));
+                    printf("%s:  0x%08X\n",regsl[i],reg_l(i));
                 }
                 for(int i =0 ;i < 8; i++){
-                    printf("%s:  %08X\n",regsw[i],reg_w(i));
+                    printf("%s:  0x%08X\n",regsw[i],reg_w(i));
                 }
                 for(int i =0 ;i < 8; i++){
-                    printf("%s:  %08X\n",regsb[i],reg_b(i));
+                    printf("%s:  0x%08X\n",regsb[i],reg_b(i));
                 }
                 printf("eflags:CF=%d,ZF=%d,SF=%d,IF=%d,OF=%d\n CR0=0x%x, CR3=0x%x\n",
                        cpu.eflags.CF, cpu.eflags.ZF, cpu.eflags.SF, cpu.eflags.IF, cpu.eflags.OF,
