@@ -50,5 +50,11 @@ gdb: $(BINARY)
 	$(call git_commit, "gdb")
 	gdb -s $(BINARY) --args $(NEMU_EXEC)
 
-clean: 
+clean:
 	rm -rf $(BUILD_DIR)
+
+count:
+	git checkout pa0
+	find . -name "*.[ch]" |xargs cat|wc -l
+	git checkout pa1
+	find . -name "*.[ch]" |xargs cat|wc -l
