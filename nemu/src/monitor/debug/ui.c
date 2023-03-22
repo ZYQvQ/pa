@@ -85,7 +85,7 @@ static struct {
   { "c", "Continue the execution of the program", cmd_c },
   { "q", "Exit NEMU", cmd_q },
   //Add more commands
-  { "si", "execute [N] instructions", cmd_si},
+  { "si", "execute [N] instructions", cmd_si },
   { "info", "[-r] reg info, [-w] watchpoint info", cmd_info},
   { "p","expr_val",cmd_p},
   { "x", "[N] [expr] memory ", cmd_x},
@@ -122,12 +122,13 @@ static int cmd_help(char *args) {
 static int cmd_si(char* args){
     uint64_t n = 1;
     if(args != NULL){
-        int si_suc = sscanf(args,"%llu",&n);
+        int si_suc = sscanf(args,"%lu",&n);
         if(si_suc <= 0 ){
             printf("args error in cmd_si\n");
             return 0;
         }
     }
+    n=5;
     cpu_exec(n);
     return 0;
 }
