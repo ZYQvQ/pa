@@ -127,11 +127,12 @@ void printAllWp(){
 }
 
 //是否触发wp
+// 您得注意下返回值的意义啊  您这么写 cpu——exec就是 ！check_wp
 bool check_wp() {
     bool succ;
     int val;
     if(head == NULL) {
-        return true;
+        return true;   // 为空当然返回false 了！！！！！！！！！qwq
     }
     WP *wp_t = head;
     while (wp_t)

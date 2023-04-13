@@ -128,7 +128,6 @@ static int cmd_si(char* args){
             return 0;
         }
     }
-    n=5;
     cpu_exec(n);
     return 0;
 }

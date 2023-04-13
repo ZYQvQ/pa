@@ -1,6 +1,7 @@
 #include "cpu/exec.h"
 #include "all-instr.h"
-
+//opcode_table 数组.这就是我们之前提到的译码查找表了,这一张表
+//        通过操作码 opcode 来索引,每一个 opcode 对应相应指令的译码函数,执行函数,以及操作数宽度.
 typedef struct {
     DHelper decode;
     EHelper execute;
@@ -12,6 +13,7 @@ typedef struct {
 #define EXW(ex, w)         {NULL, concat(exec_, ex), w}
 #define EX(ex)             EXW(ex, 0)
 #define EMPTY              EX(inv)
+#define TIME_IRQ 32 //干吗的？？
 
 static inline void set_width(int width) {
     if (width == 0) {

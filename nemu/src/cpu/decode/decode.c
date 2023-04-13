@@ -1,6 +1,10 @@
 #include "cpu/exec.h"
 #include "cpu/rtl.h"
-
+//decoding 结构.它用于记录一些全局译码信息供后续使用,包括
+//操作数的类型,宽度,值等信息
+//.其中的 src 成员,src2 成员和 dest 成员分别代表两个源操作数和一个
+//目的操作数.nemu/include/cpu/decode.h 中定义了三个宏 id_src,id_src2 和 id_dest,用于方便地访
+//问它们.
 /* shared by all helper functions */
 DecodeInfo decoding;
 rtlreg_t t0, t1, t2, t3;
@@ -308,4 +312,21 @@ void operand_write(Operand *op, rtlreg_t* src) {
     if (op->type == OP_TYPE_REG) { rtl_sr(op->reg, op->width, src); }
     else if (op->type == OP_TYPE_MEM) { rtl_sm(&op->addr, op->width, src); }
     else { assert(0); }
+}
+
+//load
+make_DHelper(mov_load_cr) {
+        decode_op_rm(eip, id_dest, false, id_src, false);
+        rtl_load_cr(&id_src -> val, id_src -> reg);
+#ifdef DEBUG
+        snprintf(id_src -> str, 5, "%%cr%d", id_dest -> reg);
+#endif
+}
+
+//store
+make_DHelper(mov_store_cr) {
+        decode_op_rm(eip, id_src, true, id_dest, false);
+#ifdef DEBUG
+        snprintf(id_src -> str, 5, "%%cr%d", id_dest -> reg);
+#endif
 }
